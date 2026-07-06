@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIPAN Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0f172a;
+            background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%);
+            font-family: 'Tahoma', sans-serif;
+        }
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="h-screen flex items-center justify-center">
+
+    <div class="glass p-8 rounded-2xl w-full max-w-sm text-center shadow-2xl">
+        <h1 class="text-3xl font-bold text-white mb-2">AIPAN</h1>
+        <p class="text-gray-400 mb-6 text-sm">Panel Management System</p>
+        
+        <input type="password" id="password" placeholder="Enter Password" 
+               class="w-full bg-slate-800 border border-slate-600 text-white rounded-xl px-4 py-3 mb-4 focus:outline-none focus:border-indigo-500 transition text-center">
+        
+        <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-indigo-500/30">
+            ورود
+        </button>
+        
+        <p id="error-msg" class="text-red-400 text-sm mt-4 hidden">رمز عبور اشتباه است!</p>
+    </div>
+
+    <script>
+        // چک کردن اگر قبلا لاگین کرده
+        const token = localStorage.getItem('aipan_token');
+        if (token) {
+            window.location.href = '/dash';
+        }
+
+        async function login() {
+            const pass = document.getElementById('password').value;
+            const btn = document.querySelector('button');
+            const errorMsg = document.getElementById('error-msg');
+
+            btn.innerText = '...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: pass })
+                });
+                
+                const data = await res.json();
+
+                if (data.success) {
+                    // ذخیره توکن در مرورگر
+                    localStorage.setItem('aipan_token', data.token);
+                    window.location.href = '/dash';
+                } else {
+                    errorMsg.classList.remove('hidden');
+                    btn.innerText = 'ورود';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                alert('خطا در ارتباط با سرور');
+                btn.innerText = 'ورود';
+                btn.disabled = false;
+            }
+        }
+
+        // زدن اینتر برای لاگین
+        document.getElementById('password').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') login();
+        });
+    </script>
+</body>
+</html>
