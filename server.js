@@ -107,3 +107,11 @@ app.listen(config.PORT, () => {
     console.log(`🚀 AIPAN Panel running on port ${config.PORT}`);
     console.log(`🔑 Login at: http://localhost:${config.PORT}/login`);
 });
+
+// انتهای فایل server.js را با این کد جایگزین کنید
+const PORT = process.env.PORT || config.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`🚀 AIPAN Panel running on port ${PORT}`);
+    console.log(`🔑 Login at: http://localhost:${PORT}/login`);
+});
